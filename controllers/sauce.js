@@ -49,11 +49,11 @@ exports.deleteSauce = (req, res, next) => {
 		.catch(error => res.status(500).json({error}));
 };
 
-/**exports.likeSauce = (req, res, next) => {
+exports.likeSauce = (req, res, next) => {
 	Sauce.findOne({_id: req.params.id})
-	console.log(req.params.id);
 		.then(Sauce => {
 			if(req.body.like == 1) {
+				console.log(req.body.like);
 				sauce.likes++;
 			}
 			if(req.body.like == 0 | req.body.like == -1) {
@@ -61,5 +61,5 @@ exports.deleteSauce = (req, res, next) => {
 			}
 			Sauce.updateOne(req.body.like);
 		})
-		.catch(error => res.status(404).json({error}));
-};**/
+		.catch(error => res.status(500).json({error}));
+};
