@@ -38,8 +38,8 @@ exports.getOneSauce = (req, res, next) => {
 
 exports.deleteSauce = (req, res, next) => {
 	Sauce.findOne({_id: req.params.id})
-		.then(Sauce => {
-			const filename = Sauce.imageUrl.split('/images')[1];
+		.then(sauce => {
+			const filename = sauce.imageUrl.split('/images')[1];
 			fs.unlink(`images/${filename}`, () => {
 				Sauce.deleteOne({_id: req.params.id})
 					.then(() => res.status(200).json({message: 'Sauce supprimée !'}))
@@ -51,15 +51,19 @@ exports.deleteSauce = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
 	Sauce.findOne({_id: req.params.id})
-		.then(Sauce => {
+		.then(sauce => {
 			if(req.body.like == 1) {
 				console.log(req.body.like);
 				sauce.likes++;
 			}
-			if(req.body.like == 0 | req.body.like == -1) {
+			if(req.body.like == 0) {
 				sauce.likes--;
 			}
-			Sauce.updateOne(req.body.like);
+			if(req.body.like == -1) {
+				sauce.dislikes++;
+			}
+			Sauce.updateOne({_id: req.params.id}, sauce)
+			.then(sauce => res.status(200).json({message: 'Sauce mis à jour'}))
 		})
 		.catch(error => res.status(500).json({error}));
 };
