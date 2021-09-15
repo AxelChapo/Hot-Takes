@@ -53,14 +53,34 @@ exports.likeSauce = (req, res, next) => {
 	Sauce.findOne({_id: req.params.id})
 		.then(sauce => {
 			if(req.body.like == 1) {
-				console.log(req.body.like);
-				sauce.likes++;
+				if(usersLiked.includes(req.body.userId, start)){
+					sauce.likes = sauce.likes;
+				}
+				else {
+					sauce.likes++;
+					sauce.usersLiked.push(req.body.userId);
+				}
+				console.log(usersLiked)
 			}
 			if(req.body.like == 0) {
 				sauce.likes--;
+				const found = usersLiked.find(req.body.userId);
+
+				if(usersLiked.includes(req.body.userId, start)){
+					sauce.usersLiked.remove(req.body.userId);
+				}
+				else {
+					sauce.usersDisliked.remove(req.body.userId);
+				}
 			}
 			if(req.body.like == -1) {
-				sauce.dislikes++;
+				if(usersDisliked.includes(req.body.userId, start)){
+					sauce.dislikes = sauce.dislikes;
+				}
+				else {
+					sauce.dislikes++;
+					sauce.usersDisliked.push(req.body.userId);
+				}
 			}
 			Sauce.updateOne({_id: req.params.id}, sauce)
 			.then(sauce => res.status(200).json({message: 'Sauce mis à jour'}))
